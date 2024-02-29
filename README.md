@@ -48,7 +48,27 @@ $ anvil
 ### Deploy
 
 ```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+export $(cat .env | xargs)
+forge script script/DeployMessageReceiver.s.sol:DeployMessageReceiver --rpc-url $CCHAIN_RPC_URL \
+      -vvv --broadcast --account mytestkey --verify \
+      --verifier-url 'https://api.routescan.io/v2/network/testnet/evm/43113/etherscan' \
+      --etherscan-api-key "verifyContract"
+```
+
+### Verify
+```shell
+forge verify-contract 0x4E79e429e546532334515FCd574489608FA8ECA1 src/MessageReceiver.sol:MessageReceiver \
+      --verifier-url 'https://api.routescan.io/v2/network/testnet/evm/43113/etherscan' \
+      --etherscan-api-key "verifyContract" \
+      --num-of-optimizations 200 \
+      --compiler-version 0.8.18 \
+      --constructor-args $(cast abi-encode "MessageReceiver()")
+```
+
+### Send Message
+```
+forge script script/SendMsg2CChain.s.sol:SendMsg2CChain --rpc-url $KTS_RPC_URL \
+      -vvv --broadcast --account mytestkey 
 ```
 
 ### Cast
